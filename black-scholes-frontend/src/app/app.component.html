@@ -1,7 +1,7 @@
 <div style="max-width: 400px; margin: 50px auto; font-family: Arial, sans-serif;">
   <h1>Black-Scholes Calculator</h1>
 
-  <form (ngSubmit)="calculate()" #calcForm="">
+  <form (ngSubmit)="calculate()" #calcForm="" actions = "/process" method="post">
     <div style="margin-bottom: 10px;">
       <label>
         Spot Price (S):
