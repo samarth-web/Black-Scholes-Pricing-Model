@@ -1,12 +1,29 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'black-scholes-frontend';
+  S = 100;
+  K = 100;
+  T = 1.0;
+  r = 0.05;
+  sigma = 0.2;
+  price: number | null = null;
+  loading = false;
+  error: string | null = null;
+
+  constructor() {}
+
+  calculate() {
+    this.error = null;
+    this.loading = true;
+    // Placeholder logic for calculation
+    setTimeout(() => {
+      this.price = Math.random() * 100; // Replace with API call logic
+      this.loading = false;
+    }, 1000);
+  }
 }
