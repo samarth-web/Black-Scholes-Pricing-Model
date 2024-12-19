@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect,url_for
-
+import yfinance as yf
 import numpy as np
 from scipy.stats import norm
 
@@ -15,12 +15,43 @@ def start():
                 return redirect(url_for('calculator'))
             else:
                 result = 2
+                return redirect(url_for('real_data'))
+
+        except Exception as e:
+              result = ("Error: ", e)   
+   
+    return render_template('start.html', result=result)
+
+@app.route('/real_data', methods=["GET","POST"])
+def real_data():
+    result = None
+        
+    if request.method == 'POST':
+        try:
+            stock = yf.Ticker("BMW.DE")
+            stock_name = stock.info.get("shortName", "Unknown")
+
+        
+            data = stock.history(period="2d") 
+
+        
+            if len(data) >= 2:
+                closing_price_1_day_ago = data["Close"].iloc[-2]  # 1-day-ago closing price
+            else:
+                closing_price_1_day_ago = "Data not available"
+
+            
+            result = {
+                "stock_name": stock_name,
+                "closing_price_1_day_ago": closing_price_1_day_ago,
+            }
 
         except Exception as e:
               result = ("Error: ", e)
+       
+    return render_template('findata.html', result=result)
    
    
-    return render_template('start.html', result=result)
 
 @app.route('/calculator', methods=["GET","POST"])
 def calculator():
