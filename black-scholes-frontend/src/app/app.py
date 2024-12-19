@@ -1,13 +1,29 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect,url_for
 
 import numpy as np
 from scipy.stats import norm
 
 app = Flask(__name__)
-
-
 @app.route('/', methods=['GET', 'POST'])
-def home():
+def start():
+    result = None
+    if request.method == 'POST':
+        try:
+            value = request.form.get('choice')
+            if value == 'Calculator':
+                result = 1
+                return redirect(url_for('calculator'))
+            else:
+                result = 2
+
+        except Exception as e:
+              result = ("Error: ", e)
+   
+   
+    return render_template('start.html', result=result)
+
+@app.route('/calculator', methods=["GET","POST"])
+def calculator():
     result = None
     if request.method == 'POST':
         try:

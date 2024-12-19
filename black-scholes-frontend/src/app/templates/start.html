@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Black Scholes App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+   
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Please choose:</h1>
+        <form method="POST">
+            <div class="form-check">
+                <input type="radio" id="calc" name="choice" value="Calculator" class="form-check-input" required>
+                <label for="calc" class="form-check-label">Calculator</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="yahoo" name="choice" value="Yahoo Finance Analysis" class="form-check-input">
+                <label for="yahoo" class="form-check-label">Yahoo! Finance Analysis</label>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+        </form>
+
+        {% if result is not none %}
+            <h2 class="mt-4">Result: {{ result }}</h2>
+       {%endif%}
+</body>
+</html>
