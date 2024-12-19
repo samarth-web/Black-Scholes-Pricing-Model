@@ -9,12 +9,18 @@
     <div class="container mt-5">
         <h1 class="mb-4">Stock Data</h1>
         <form method="POST">
+            <label for="ticker">Ticker symbol</label>
+            <input type="String" id="ticker" name="ticker" required>
             <button type="submit" class="btn btn-primary">Fetch Data</button>
         </form>
     <h1>Yahoo finance data:</h1>
     {% if result is not none %}
     <h2>Result: {{ result }}</h2>
 {% endif %}
-
+<div class="mt-4">
+    <a href="/" class="btn btn-secondary">Home</a>
+    <a href="/calculator" class="btn btn-secondary">Calculator</a>
+</div>
+</div>
 </body>
 </html>

@@ -28,7 +28,8 @@ def real_data():
         
     if request.method == 'POST':
         try:
-            stock = yf.Ticker("BMW.DE")
+            symbol = request.form.get('ticker')
+            stock = yf.Ticker(symbol)
             stock_name = stock.info.get("shortName", "Unknown")
 
         
