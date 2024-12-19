@@ -1,47 +1,11 @@
-from flask import Flask, render_template_string, request
+from flask import Flask, render_template, request
 
 import numpy as np
 from scipy.stats import norm
 
 app = Flask(__name__)
 
-# HTML template for the website
-HTML_TEMPLATE = """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Black Scholes App</title>
-</head>
-<body>
-    <h1>Please provide the following inputs for the Black-Scholes model:</h1>
-    <form method="POST">
-        <label for="S">Underlying price (S):</label>
-        <input type="decimal" id="S" name="S" required><br><br>
 
-        <label for="K">Strike price (K):</label>
-        <input type="decimal" id="K" name="K" required><br><br>
-
-        <label for="r">Risk-free rate (r) as a decimal (e.g., 0.01 for 1%):</label>
-        <input type="decimal" id="r" name="r" required><br><br>
-
-        <label for="T">Time to maturity (T) in years (e.g., 0.5 for 6 months):</label>
-        <input type="decimal" id="T" name="T" required><br><br>
-
-        <label for="sigma">Volatility (sigma) as a decimal (e.g., 0.2 for 20%):  </label>
-        <input type="decimal" id="sigma" name="sigma" required><br><br>
-
-        <label for="option_type">Option type ('call' or 'put'):</label>
-        <input type="String" id="option_type" name="option_type" required><br><br>
-
-        <button type="submit">Calculate</button>
-    </form>
-
-    {% if result is not none %}
-        <h2>Result: {{ result }}</h2>
-    {% endif %}
-</body>
-</html>
-"""
 @app.route('/', methods=['GET', 'POST'])
 def home():
     result = None
@@ -71,7 +35,7 @@ def home():
         except Exception as e:
                 result = ("Error: ", e)
    
-    return render_template_string(HTML_TEMPLATE, result=result)
+    return render_template('app.html', result=result)
 
 
 def d1_d2(S, K, r, T, sigma):
