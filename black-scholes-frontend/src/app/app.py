@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect,url_for
 import yfinance as yf
 import numpy as np
 from scipy.stats import norm
+import datetime
 
 app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
@@ -30,26 +31,33 @@ def real_data():
         try:
             symbol = request.form.get('ticker')
             stock = yf.Ticker(symbol)
-            stock_name = stock.info.get("shortName", "Unknown")
+            stock_price = stock.history(period="1d")["Close"].iloc[-1]
+            name = stock.info.get("longName", "Company name not found")
+            expiring_dates = stock.options
+            early_date = expiring_dates[0] #Getting the first expiring date
+            options_chain = stock.option_chain(early_date)
+            calls = options_chain.calls
+            puts = options_chain.puts
+            strike_price_calls = calls['strike'].iloc[0]
+            strike_price_puts = puts['strike'].iloc[0]
+            today = datetime.date.today()
+            early_date_obj = datetime.datetime.strptime(early_date, '%Y-%m-%d').date()
+            time_to_expiry = (early_date_obj - today).days / 365
+            implied_volatility_calls = calls[calls['strike'] == strike_price_calls]['impliedVolatility'].values[0]
+            implied_volatility_puts = puts[puts['strike'] == strike_price_puts]['impliedVolatility'].values[0]
+            treasury_data = yf.Ticker("^IRX")
+            latest_data = treasury_data.history(period="1d")
+            treasury_yield = latest_data['Close'].iloc[-1]
+            risk_free_rate = treasury_yield / 100
 
-        
-            data = stock.history(period="2d") 
+            result = {"name": name, "stock price": stock_price, "time to maturity": time_to_expiry, "implied volatility": implied_volatility_calls, "risk free rate": risk_free_rate, "call strike price": strike_price_calls
 
-        
-            if len(data) >= 2:
-                closing_price_1_day_ago = data["Close"].iloc[-2]  # 1-day-ago closing price
-            else:
-                closing_price_1_day_ago = "Data not available"
-
-            
-            result = {
-                "stock_name": stock_name,
-                "closing_price_1_day_ago": closing_price_1_day_ago,
             }
 
         except Exception as e:
               result = ("Error: ", e)
        
+
     return render_template('findata.html', result=result)
    
    
@@ -67,7 +75,7 @@ def calculator():
             T = float(request.form.get('T'))
             sigma = float(request.form.get('sigma'))
             option_type = request.form.get('option_type', 'call').strip().lower()
-
+             
             if option_type == 'call':
                 pass
             elif option_type == 'put':
