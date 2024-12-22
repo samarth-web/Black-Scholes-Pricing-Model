@@ -3,7 +3,8 @@ import yfinance as yf
 import numpy as np
 from scipy.stats import norm
 import datetime
-
+import io
+import matplotlib.pyplot as plt
 app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def start():
@@ -48,10 +49,30 @@ def real_data():
             treasury_data = yf.Ticker("^IRX")
             latest_data = treasury_data.history(period="1d")
             treasury_yield = latest_data['Close'].iloc[-1]
-            risk_free_rate = treasury_yield / 100
+            risk_free_rate = treasury_yield/100 
+            option_premium_call = calls[calls['strike'] == strike_price_calls]['lastPrice']
+            option_premium_puts = puts[puts['strike'] == strike_price_puts]['lastPrice']
+            
+            S = stock_price
+            K = strike_price_calls
+            r = risk_free_rate
+            T = time_to_expiry
+            sigma = implied_volatility_calls
+            option_type = "call"
+   
+            
+            price = black_scholes_price(S, K, r, T, sigma, option_type)
+            greeks = black_scholes_greeks(S, K, r, T, sigma, option_type)
 
+          
+
+            # Encode the image to Base64
+          
+
+  
+            
             result = {"name": name, "stock price": stock_price, "time to maturity": time_to_expiry, "implied volatility": implied_volatility_calls, "risk free rate": risk_free_rate, "call strike price": strike_price_calls
-
+            , "price": price, "Real-world premium": option_premium_call.values[0]
             }
 
         except Exception as e:
@@ -59,7 +80,7 @@ def real_data():
        
 
     return render_template('findata.html', result=result)
-   
+
    
 
 @app.route('/calculator', methods=["GET","POST"])
@@ -100,7 +121,7 @@ def d1_d2(S, K, r, T, sigma):
     d2 = d1 - sigma * np.sqrt(T)
     return d1, d2
 
-def black_scholes_price(S, K, r, T, sigma, option_type='call'):
+def black_scholes_price(S, K, r, T, sigma, option_type):
   
     d1, d2 = d1_d2(S, K, r, T, sigma)
     
@@ -113,7 +134,7 @@ def black_scholes_price(S, K, r, T, sigma, option_type='call'):
 
     return price
 
-def black_scholes_greeks(S, K, r, T, sigma, option_type='call'):
+def black_scholes_greeks(S, K, r, T, sigma, option_type):
    
     d1, d2 = d1_d2(S, K, r, T, sigma)
     pdf_d1 = norm.pdf(d1)  

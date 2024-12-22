@@ -14,12 +14,23 @@
             <button type="submit" class="btn btn-primary">Fetch Data</button>
         </form>
     <h1>Yahoo finance data:</h1>
-    {% if result is not none %}
-    <h2>Result: {{ result }}</h2>
-{% endif %}
+  
+    <p>Name: <span id="name">{{ result['name'] }}</span></p>
+    <p>Stock Price: <span id="stock_price">{{ result['stock price'] }}</span></p>
+    <p>Time to Maturity: <span id="time_to_maturity">{{ result['time to maturity'] }}</span> years</p>
+    <p>Implied Volatility: <span id="implied_volatility">{{ result['implied volatility'] }}</span></p>
+    <p>Risk-Free Rate: <span id="risk_free_rate">{{ result['risk free rate'] }}</span></p>
+    <p>Call Strike Price: <span id="call_strike_price">{{ result['call strike price'] }}</span></p>
+    <p>Theoretical Premium calculated from Black-Scholes-Merton model: <span id="price">{{ result['price'] }}</span></p>
+    <p>Real-world premium of option: <span id="Real-world premium">{{ result['Real-world premium'] }}</span></p>
+
+
+   
+
 <div class="mt-4">
     <a href="/" class="btn btn-secondary">Home</a>
     <a href="/calculator" class="btn btn-secondary">Calculator</a>
+
 </div>
 </div>
 </body>
