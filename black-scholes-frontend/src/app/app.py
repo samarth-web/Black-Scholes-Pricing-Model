@@ -5,6 +5,9 @@ from scipy.stats import norm
 import datetime
 import io
 import matplotlib.pyplot as plt
+from textblob import TextBlob
+from newsapi import NewsApiClient
+
 app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def start():
@@ -59,16 +62,31 @@ def real_data():
             T = time_to_expiry
             sigma = implied_volatility_calls
             option_type = "call"
-   
-            
+          
             price = black_scholes_price(S, K, r, T, sigma, option_type)
             greeks = black_scholes_greeks(S, K, r, T, sigma, option_type)
 
           
 
-            # Encode the image to Base64
-          
+            val = 0
+            sum = 0
+            count = 0
+            newsapi = NewsApiClient(api_key='d09f2385c542494988c905a29e19a0f5')
+            articles = newsapi.get_everything(q=ticker, language='en', page_size=50, sort_by='relevancy')
+            headlines = [article['title'] for article in articles['articles']]
+            for headline in headlines: 
+                val = 0
+                val = Textblob(headline).sentiment.polarity
+                val = val + 1
+                val = val/2
+                sum+ = val
+                count = count + 1
+            headline_score = sum/count
 
+
+
+          
+            
   
             
             result = {"name": name, "stock price": stock_price, "time to maturity": time_to_expiry, "implied volatility": implied_volatility_calls, "risk free rate": risk_free_rate, "call strike price": strike_price_calls
@@ -108,7 +126,7 @@ def calculator():
             greeks = black_scholes_greeks(S, K, r, T, sigma, option_type)
 
             result =("Price: ", price ,", Greeks: ", greeks)
-
+            
         except Exception as e:
                 result = ("Error: ", e)
    
@@ -176,6 +194,9 @@ def black_scholes_greeks(S, K, r, T, sigma, option_type):
 
     return greeks
 
+        
+   
+ 
 
 if __name__ == '__main__':
     app.run(debug=True)
