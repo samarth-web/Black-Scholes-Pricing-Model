@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import tweepy
 import requests
 
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 
 twitter_bearer_token = "AAAAAAAAAAAAAAAAAAAAADbSxgEAAAAA4K%2B1oKo0ftzRlHbmwLVJ7ebt74U%3Deq9v7fgIu9q70B4iqPPdBagEXrD3YAkVnl6k4TZ0tbZaXEwsHY"
@@ -13,16 +14,25 @@ BASE_URL = 'https://www.alphavantage.co/query'
 params = {
     'function': 'NEWS_SENTIMENT',
     'tickers': 'AAPL',
-    'apikey': alpha_API_KEY
+    'apikey': alpha_API_KEY,
+    'limit': 1000
 }
 
 response = requests.get(BASE_URL, params=params)
 data = response.json()
-
+agg = 0
+counting = 0
 sentiment_scores = [article['overall_sentiment_score'] for article in data.get('feed', [])]
-
 for score in sentiment_scores:
-    print(type(score))
+    score = (score+1)/2
+    agg = agg + score
+    counting = counting + 1
+value = agg/counting
+print(value)
+
+
+
+
 
 #Free Twitter(X) API usage allowed is only 100 posts per month (use cautiously)
 
@@ -56,16 +66,32 @@ count = 0
 newsapi = NewsApiClient(api_key='d09f2385c542494988c905a29e19a0f5')
 today = datetime.now().strftime('%Y-%m-%d')
 one_week_ago = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
-articles = newsapi.get_everything(q='Bangladesh', language='en', from_param=one_week_ago, to=today, page_size=100, sort_by='relevancy')
-headlines = [article['title'] for article in articles['articles']]
+articles = newsapi.get_everything(
+    q='AAPL',
+    language='en',
+    from_param=one_week_ago,
+    to=today,
+    page_size=100,
+    sort_by='relevancy'
+)
+
+headlines = []
+for article in articles['articles']:
+    combined_text = (article.get('title') or '') + ' ' + (article.get('description') or '')
+    headlines.append(combined_text)
 
 threshold = 0.1  # Define neutrality range
 sentiment_scores = []
 
+analyzer = SentimentIntensityAnalyzer()
 for headline in headlines:
-    sentiment = TextBlob(headline).sentiment.polarity
-    if abs(sentiment) > threshold:  
-        normalized_sentiment = (sentiment + 1) / 2  
+    scores = analyzer.polarity_scores(headline)
+    compound = scores['compound']
+    if abs(compound) > threshold:  
+        normalized_sentiment = (compound + 1) / 2  
         sentiment_scores.append(normalized_sentiment)
 
-print((sum(sentiment_scores) / len(sentiment_scores)) * 100)
+res = (sum(sentiment_scores) / len(sentiment_scores)) 
+print(res)
+total = (res + value)/2
+print(total)
