@@ -7,6 +7,8 @@ import io
 import matplotlib.pyplot as plt
 from textblob import TextBlob
 from newsapi import NewsApiClient
+from sentimental import sentiment_analysis
+
 
 app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
@@ -55,46 +57,33 @@ def real_data():
             risk_free_rate = treasury_yield/100 
             option_premium_call = calls[calls['strike'] == strike_price_calls]['lastPrice']
             option_premium_puts = puts[puts['strike'] == strike_price_puts]['lastPrice']
-            
+            optimized_implied_volatility = sentiment_analysis(symbol)
+            print(optimized_implied_volatility)
+            new_volitlity_calls = implied_volatility_calls * (1+2 * (optimized_implied_volatility - 0.5))
             S = stock_price
             K = strike_price_calls
             r = risk_free_rate
             T = time_to_expiry
             sigma = implied_volatility_calls
             option_type = "call"
-          
+           
             price = black_scholes_price(S, K, r, T, sigma, option_type)
             greeks = black_scholes_greeks(S, K, r, T, sigma, option_type)
+            optimized_price = black_scholes_price(S, K, r, T, new_volitlity_calls, option_type)
 
           
 
-            val = 0
-            sum = 0
-            count = 0
-            newsapi = NewsApiClient(api_key='d09f2385c542494988c905a29e19a0f5')
-            articles = newsapi.get_everything(q=ticker, language='en', page_size=50, sort_by='relevancy')
-            headlines = [article['title'] for article in articles['articles']]
-            for headline in headlines: 
-                val = 0
-                val = Textblob(headline).sentiment.polarity
-                val = val + 1
-                val = val/2
-                sum+ = val
-                count = count + 1
-            headline_score = sum/count
-
-
-
-          
+                     
             
   
             
             result = {"name": name, "stock price": stock_price, "time to maturity": time_to_expiry, "implied volatility": implied_volatility_calls, "risk free rate": risk_free_rate, "call strike price": strike_price_calls
-            , "price": price, "Real-world premium": option_premium_call.values[0]
+            , "price": price, "Real-world premium": option_premium_call.values[0], "Optimized premium": optimized_price
             }
 
         except Exception as e:
               result = ("Error: ", e)
+              print(result)
        
 
     return render_template('findata.html', result=result)
