@@ -34,7 +34,7 @@ def real_data():
     result = None
         
     if request.method == 'POST':
-        try:
+        # try:
             symbol = request.form.get('ticker')
             stock = yf.Ticker(symbol)
             stock_price = stock.history(period="1d")["Close"].iloc[-1]
@@ -64,8 +64,15 @@ def real_data():
             K = strike_price_calls
             r = risk_free_rate
             T = time_to_expiry
+            if T == 0: #Time will go to 0 on weekends so made this temp fix :)
+                T = 1
+            if K == 0:
+                print("this is K", K)
+            
             sigma = implied_volatility_calls
             option_type = "call"
+            if sigma == 0:
+                print("this is sigma" , sigma)
            
             price = black_scholes_price(S, K, r, T, sigma, option_type)
             greeks = black_scholes_greeks(S, K, r, T, sigma, option_type)
@@ -81,9 +88,9 @@ def real_data():
             , "price": price, "Real-world premium": option_premium_call.values[0], "Optimized premium": optimized_price
             }
 
-        except Exception as e:
-              result = ("Error: ", e)
-              print(result)
+        # except Exception as e:
+        #       result = ("Error: ", e)
+        #       print(result)
        
 
     return render_template('findata.html', result=result)
