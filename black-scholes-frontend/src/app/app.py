@@ -34,7 +34,7 @@ def real_data():
     result = None
         
     if request.method == 'POST':
-        # try:
+        try:
             symbol = request.form.get('ticker')
             stock = yf.Ticker(symbol)
             stock_price = stock.history(period="1d")["Close"].iloc[-1]
@@ -88,9 +88,9 @@ def real_data():
             , "price": price, "Real-world premium": option_premium_call.values[0], "Optimized premium": optimized_price
             }
 
-        # except Exception as e:
-        #       result = ("Error: ", e)
-        #       print(result)
+        except Exception as e:
+              result = ("Error: ", e)
+              print(result)
        
 
     return render_template('findata.html', result=result)
