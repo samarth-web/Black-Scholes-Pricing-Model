@@ -101,7 +101,7 @@ def sentiment_analysis(symbol):
         res = (sum(sentiment_scores) / len(sentiment_scores)) 
         print(res)
         var = "trial123"
-        total = (0.3* res + 0.7 *value)
+        total = 100000*res
 
         yahoo_news = symbol.news
 

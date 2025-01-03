@@ -8,13 +8,13 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-image: url('bg_graph.png'); 
+    background-image: url('bg_graph.png');
     background-size: cover;
     background-position: center;
 }
 
 .container {
-    position: relative; 
+    position: relative;
     background-color: #1e1e1e;
     padding: 30px;
     border-radius: 15px;
@@ -24,22 +24,15 @@ body {
     text-align: center;
 }
 
-h1 {
-    color: #00bcd4;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-
 .mt-4 {
-    position: absolute; 
+    position: absolute;
     top: 10px;
     left: 10px;
 }
 
 .mt-4 a {
     margin-right: 10px;
-    color:  #388e3c;
+    color: #388e3c;
     text-decoration: none;
 }
 
@@ -54,10 +47,15 @@ h1 {
     background-color: #388e3c;
 }
 
+h1 {
+    color: #00bcd4;
+    margin-bottom: 20px;
+    text-align: center;
+}
 
 form {
     margin: 0 auto;
-    text-align: left; 
+    text-align: left;
 }
 
 form label {
@@ -99,4 +97,8 @@ form button:hover {
 h2 {
     margin-top: 20px;
     color: #f8f8f8;
+    text-align: left;
+    background-color: #2c2c2c;
+    padding: 10px;
+    border-radius: 5px;
 }
