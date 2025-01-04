@@ -14,6 +14,18 @@ import requests
 import re
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from transformers import pipeline
+from pytz import timezone
+
+def market_open():
+    now = datetime.now(timezone('US/Eastern'))
+    if now.weekday() >= 5:  
+        return False
+    market_open = now.replace(hour=9, minute=30, second=0, microsecond=0)
+    market_close = now.replace(hour=16, minute=0, second=0, microsecond=0)
+    if (now <= market_close and now>=market_open):
+        return True
+    else:
+        return False
 
 def sentiment_analysis(symbol):
 
@@ -157,8 +169,8 @@ def sentiment_analysis(symbol):
     except Exception as e:
               total = 0
               result = ("Error: in sentimental analysis", e)
-              print(yf.Ticker(symbol).news)
-              print(result)
+              #print(yf.Ticker(symbol).news)
+              #print(result)
     
 
       
@@ -234,8 +246,8 @@ def real_data():
             T = time_to_expiry
             if T == 0: #Time will go to 0 on weekends so made this temp fix :)
                 T = 1
-            if K == 0:
-                print("this is K", K)
+            if K_calls == 0:
+                print("this is K", K_calls)
             
             sigma = implied_volatility_calls
             option_type = "call"
@@ -267,6 +279,7 @@ def real_data():
     return render_template('findata.html', result=result)
 
    
+
 
 @app.route('/calculator', methods=["GET","POST"])
 def calculator():
